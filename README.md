@@ -17,8 +17,10 @@
   - [多进程架构](zh/Start_Here_Background_Reading/Multi-process_Architecture.md)
   
     **Note**: 设计文档的大部分剩余部分都认为你对上面这个文档里的内容非常熟悉。
-
-  - [Chromium如何展示web界面](zh/Start_Here_Background_Reading/How_Chromium_Displays_Web_Pages.md): 自底向上概述WebKit是如何嵌入到Chromium中的
+  - [Blink 如何工作](zh/Start_Here_Background_Reading/How_Blink_Works.md) Blink 宏观架构概述
+  - “一个像素的一生”演讲。 ([slides](http://bit.ly/lifeofapixel) /
+            [video](http://bit.ly/loap-2020-video)) 介绍 Chromium 的渲染管线，从网页的内容追踪到展示的像素。
+  - \[有点过时了\] [Chromium如何展示web界面](zh/Start_Here_Background_Reading/How_Chromium_Displays_Web_Pages.md): 自底向上概述WebKit是如何嵌入到Chromium中的
   
 ## See Also: 源代码中的设计文档
 
