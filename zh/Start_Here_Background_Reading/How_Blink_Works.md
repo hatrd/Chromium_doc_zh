@@ -44,7 +44,7 @@ Blink通过[内容公共API](https://chromium.googlesource.com/chromium/src/+/HE
 
 Chromium具有[多进程架构](Multi-process\_Architecture.md)。Chromium有一个浏览器进程和N个沙盒化的渲染器进程。Blink在渲染器进程中运行。
 
-有多少个渲染器进程被创建？出于安全原因，重要的是在跨站点文档之间隔离内存地址区域（这称为[站点隔离](https://www.chromium.org/Home/chromium-security/site-isolation)）。从概念上讲，每个渲染器进程应该专门用于至多一个站点。然而，实际上，当用户打开太多选项卡或设备没有足够的RAM时，将每个渲染器进程限制为单个站点有时会太重。然后，一个渲染器进程可以由从不同站点加载的多个iframe或选项卡共享。这意味着一个选项卡中的iframe可能由不同的渲染器进程托管，而不同选项卡中的iframe可能由同一个渲染器进程托管。**渲染器进程、iframe和选项卡之间没有1:1的映射关系。**
+有多少个渲染器进程被创建？出于安全原因，重要的是在跨站点文档之间隔离内存地址区域（这称为[站点隔离](../Feature-Specific/Site\_Isolation.md)）。从概念上讲，每个渲染器进程应该专门用于至多一个站点。然而，实际上，当用户打开太多选项卡或设备没有足够的RAM时，将每个渲染器进程限制为单个站点有时会太重。然后，一个渲染器进程可以由从不同站点加载的多个iframe或选项卡共享。这意味着一个选项卡中的iframe可能由不同的渲染器进程托管，而不同选项卡中的iframe可能由同一个渲染器进程托管。**渲染器进程、iframe和选项卡之间没有1:1的映射关系。**
 
 由于渲染器进程在沙箱中运行，Blink需要请求浏览器进程分派系统调用（例如文件访问、播放音频）并访问用户配置文件数据（例如cookie、密码）。这种浏览器-渲染器进程通信是通过[Mojo](https://chromium.googlesource.com/chromium/src/+/master/mojo/README.md)实现的。（注意：过去我们使用的是[Chromium IPC](https://www.chromium.org/developers/design-documents/inter-process-communication)，现在仍有很多地方在使用它。但是，它已被弃用并在底层使用Mojo。）在Chromium方面，[服务化](https://www.chromium.org/servicification)正在进行中，并将浏览器进程抽象为一组“服务”。从Blink的角度来看，Blink可以使用Mojo与服务和浏览器进程交互。
 
