@@ -1,4 +1,5 @@
 # 多进程架构
+
 这个文档描述了Chromium的高层架构
 
 ## 问题
@@ -19,7 +20,7 @@
 
 ### 管理渲染进程
 
-每个渲染进程有一个全局的RenderProcess对象，管理它与父浏览器进程之间的通信，维护全局的状态。浏览器为每个渲染进程维护一个对应的RenderViewHost，用来管理浏览器状态，并与渲染器交流。浏览器与渲染器使用[Chromium's IPC system](../General_Architecture/Inter-process_Communication.md)进行交流。
+每个渲染进程有一个全局的RenderProcess对象，管理它与父浏览器进程之间的通信，维护全局的状态。浏览器为每个渲染进程维护一个对应的RenderViewHost，用来管理浏览器状态，并与渲染器交流。浏览器与渲染器使用[Chromium's IPC system](../General\_Architecture/Inter-process\_Communication.md)进行交流。
 
 ### 管理view
 
@@ -31,25 +32,22 @@
 
 在渲染进程中：
 
-- *RenderProcess*处理与浏览器中对应的*RenderProcessHost*的通信。每个渲染进程就有唯一的一个RenderProcess对象。这就是所有浏览器-渲染器之间的交互发生的方式。
-
-- RenderView对象与它在浏览器进程中对应的RenderViewHost和我们的webkit嵌入层通信（通过RenderProcess）。这个对象代表了一个网页在标签页或一个弹出窗口的内容。
+* _RenderProcess_处理与浏览器中对应的_RenderProcessHost_的通信。每个渲染进程就有唯一的一个RenderProcess对象。这就是所有浏览器-渲染器之间的交互发生的方式。
+* RenderView对象与它在浏览器进程中对应的RenderViewHost和我们的webkit嵌入层通信（通过RenderProcess）。这个对象代表了一个网页在标签页或一个弹出窗口的内容。
 
 在浏览器进程中:
 
-- Browser对象代表了顶级浏览器窗口
-- RenderProcessHost对象代表了浏览器端浏览器的与渲染器的IPC连接。在浏览器进程里，每个渲染进程有一个RenderProcessHost对象。
-- RenderViewHost对象封装了与远端浏览器的交流，RenderWidgetHost处理输入并在浏览器中为RenderWidget进行绘制。
+* Browser对象代表了顶级浏览器窗口
+* RenderProcessHost对象代表了浏览器端浏览器的与渲染器的IPC连接。在浏览器进程里，每个渲染进程有一个RenderProcessHost对象。
+* RenderViewHost对象封装了与远端浏览器的交流，RenderWidgetHost处理输入并在浏览器中为RenderWidget进行绘制。
 
-想要得到更多关于这种嵌入是如何工作的详细信息，可以查看[How Chromium displays web pages design document](How_Chromium_displays_web_pages_design_document)。
-
+想要得到更多关于这种嵌入是如何工作的详细信息，可以查看[How Chromium displays web pages design document](How\_Chromium\_displays\_web\_pages\_design\_document/)。
 
 ## 共享绘制器进程
 
-通常，每个新的window或标签页是在一个新进程里打开的。浏览器会生成一个新的进程，然后指导它去创建一个*RenderView*。
+通常，每个新的window或标签页是在一个新进程里打开的。浏览器会生成一个新的进程，然后指导它去创建一个_RenderView_。
 
-有时候，有这样一种必要或欲望在标签页或窗口间共享渲染进程。一个web应用程序会在期望同步交流时，打开一个新的窗口，比如，在javascript里使用window.open。这种情况下，当我们创建一个新的window或标签页时，我们需要重用打开这个window的进程。我们也有一些策略来把新的标签页分配给已有的进程（如果总的进程数太大的话，或者如果用户已经为这个域名打开了一个进程）。这些策略在[Process Models](../General_Architecture/Process_Models.md)里也有阐述。
-
+有时候，有这样一种必要或欲望在标签页或窗口间共享渲染进程。一个web应用程序会在期望同步交流时，打开一个新的窗口，比如，在javascript里使用window.open。这种情况下，当我们创建一个新的window或标签页时，我们需要重用打开这个window的进程。我们也有一些策略来把新的标签页分配给已有的进程（如果总的进程数太大的话，或者如果用户已经为这个域名打开了一个进程）。这些策略在[Process Models](../General\_Architecture/Process\_Models.md)里也有阐述。
 
 ## 检测crash或者失误的渲染
 
@@ -69,13 +67,13 @@
 
 ## 插件
 
-Firefox风格的NPAPI插件运行在他们自己的进程里，与渲染器隔离。这会在[Plugin Architecture](../General_Architecture/Plugin_Architecture.md)中描述。
+Firefox风格的NPAPI插件运行在他们自己的进程里，与渲染器隔离。这会在[Plugin Architecture](../General\_Architecture/Plugin\_Architecture.md)中描述。
 
 ## 如何添加新特性(不用扩充RenderView/RenderViewHost/WebContents)
+
 ### 问题
 
-过去，新的特性（比如，自动填充选取样例）可以通过把新特性的代码导入到RenderView类（在渲染器进程里）和RenderViewHost类（在浏览器进程里）。如果一个新的特性是在浏览器进程的IO线程里处理的，那么它的IPC信息由BrowserMessageFilter调度。RenderViewHost会只为了调用WebContent对象进程调用IPC信息，这会调用另一块代码。所有的浏览器与渲染器之间的IPC信息会被声明在一个巨大的render_messages_internal.h里，为每个新特性修改所有的这些文件意味着这些类会变得臃肿。
-
+过去，新的特性（比如，自动填充选取样例）可以通过把新特性的代码导入到RenderView类（在渲染器进程里）和RenderViewHost类（在浏览器进程里）。如果一个新的特性是在浏览器进程的IO线程里处理的，那么它的IPC信息由BrowserMessageFilter调度。RenderViewHost会只为了调用WebContent对象进程调用IPC信息，这会调用另一块代码。所有的浏览器与渲染器之间的IPC信息会被声明在一个巨大的render\_messages\_internal.h里，为每个新特性修改所有的这些文件意味着这些类会变得臃肿。
 
 ### 解决方案
 
@@ -83,19 +81,20 @@ Firefox风格的NPAPI插件运行在他们自己的进程里，与渲染器隔�
 
 #### 渲染器端
 
-如果你想要过滤和发送IPC信息，实现RenderViewObserver接口(content/renderer/render_view_observer.h)。RenderViewObserver基类持有一个RenderView类，管理对象的生命周期，使其绑定到RenderView（它是可重写的）。这个类就可以过滤和发送IPC消息，此外还可以获得许多特性需要的关于页面加载与关闭的通知。作为一个例子，可以查看ChromeExtensionHelper (chrome/renderer/extensions/chrome_extension_helper.h)。
+如果你想要过滤和发送IPC信息，实现RenderViewObserver接口(content/renderer/render\_view\_observer.h)。RenderViewObserver基类持有一个RenderView类，管理对象的生命周期，使其绑定到RenderView（它是可重写的）。这个类就可以过滤和发送IPC消息，此外还可以获得许多特性需要的关于页面加载与关闭的通知。作为一个例子，可以查看ChromeExtensionHelper (chrome/renderer/extensions/chrome\_extension\_helper.h)。
 
 如果你的特性有一部分代码是在WebKit内的，避免通过WebViewClient接口回调，这样我们就不会使得WebViewClient变得庞大。考虑创建新的WebKit接口给WebKit代码调用，让渲染器端的类去实现它。作为一个例子，查看WebAutoFillClient (WebKit/chromium/public/WebAutoFillClient.h).
 
 ### 浏览器UI线程
 
-WebContentsObserver (content/public/browser/web_contents_observer.h)接口允许UI线程的对象过滤IPC信息，以及给出关于页面导航的通知。作为一个例子：查看TabHelper (chrome/browser/extensions/tab_helper.h)。
+WebContentsObserver (content/public/browser/web\_contents\_observer.h)接口允许UI线程的对象过滤IPC信息，以及给出关于页面导航的通知。作为一个例子：查看TabHelper (chrome/browser/extensions/tab\_helper.h)。
 
 ### 浏览器其他线程
 
-为了过滤和发送IPC信息给其他的浏览器线程，比如IO/FILE/WEBKIT等等，实现BrowserMessageFilter接口(content/browser/browser_message_filter.h)。BrowserRenderProcessHost对象在它的CreateMessageFilters函数里创造和增加过滤器。
+为了过滤和发送IPC信息给其他的浏览器线程，比如IO/FILE/WEBKIT等等，实现BrowserMessageFilter接口(content/browser/browser\_message\_filter.h)。BrowserRenderProcessHost对象在它的CreateMessageFilters函数里创造和增加过滤器。
 
-通常，如果一个特性有许多IPC消息，这些消息应该移动到一个独立的文件（例如，不要加到render_messages_internal.h里）。这对过滤线程（除了IO线程）也有帮助。作为一个例子，查看content/common/pepper_file_messages.h。这允许他们的过滤器PepperFileMessageFilter方便的发送文件到file线程，而不用在很多位置指定它们的ID。
+通常，如果一个特性有许多IPC消息，这些消息应该移动到一个独立的文件（例如，不要加到render\_messages\_internal.h里）。这对过滤线程（除了IO线程）也有帮助。作为一个例子，查看content/common/pepper\_file\_messages.h。这允许他们的过滤器PepperFileMessageFilter方便的发送文件到file线程，而不用在很多位置指定它们的ID。
+
 ```c
 void PepperFileMessageFilter::OverrideThreadForMessage(
     const IPC::Message& message,
